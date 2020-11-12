@@ -314,6 +314,7 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 	}
 	function switchLanguage (to, from, next) {
 		var lang = to.path.split('/')[1];
+    console.log("in switchLanguage go to", to)
 		if (!translations[lang]) {
 			var savedLang = localStorage.getItem('VueAppLanguage');
 			if (savedLang && translations[savedLang]) { lang = savedLang; }
@@ -325,7 +326,7 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 			if (lang != defaultLanguage) {
 				var translatedPath = translatePath(to.path, lang);
 				translatedPath = '/' + lang + (translatedPath.charAt(0) != '/' ? '/' : '') + translatedPath;
-				return next(translatedPath);
+				return next({path: translatedPath, query: to.query});
 			}
 		}
 		loadLanguage(lang).then(function () {
