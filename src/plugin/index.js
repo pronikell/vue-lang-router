@@ -105,7 +105,9 @@ LangRouter.install = function (Vue, options) {
 	i18n = new VueI18n({
 		locale: defaultLanguage,
 		fallbackLocale: defaultLanguage,
-		messages,
+		messages: messages,
+		dateTimeFormats: options.i18nSettings.dateTimeFormats,
+		pluralizationRules: options.i18nSettings.pluralizationRules
 	});
 
 	// Add translations to use in <language-switcher>
