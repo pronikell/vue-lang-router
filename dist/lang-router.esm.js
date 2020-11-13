@@ -271,11 +271,13 @@ LangRouter.install = function (Vue, options) {
 			}
 		}
 	}
-	i18n = new VueI18n({
-		locale: defaultLanguage,
-		fallbackLocale: defaultLanguage,
-		messages: messages,
-	});
+        i18n = new VueI18n({
+               locale: defaultLanguage,
+               fallbackLocale: defaultLanguage,
+               messages: messages,
+               dateTimeFormats: options.i18nSettings.dateTimeFormats,
+               pluralizationRules: options.i18nSettings.pluralizationRules
+        });
 	Vue.prototype._langRouter = { translations: translations };
 	Vue.prototype.$localizePath = localizePath;
 	Vue.component('localized-link', __vue_component__);
