@@ -6,6 +6,10 @@ Language routing and URL localization made easy.
 
 Built on top of :vertical_traffic_light: [Vue Router](https://router.vuejs.org/) and :globe_with_meridians: [Vue I18n](https://kazupon.github.io/vue-i18n/).
 
+## Demo
+
+You can play with demo at [Code Sandbox](https://codesandbox.io/s/vue-2-example-zy7ou?file=/src/router/index.js).
+
 ## Features
 
 :hourglass_flowing_sand: Asynchronous translation loading
@@ -23,6 +27,11 @@ Built on top of :vertical_traffic_light: [Vue Router](https://router.vuejs.org/)
 :memo: Loads last used language when visiting site again
 
 :fast_forward: No extra router setup
+
+
+## Version information
+
+This version is compatible with [Vue 2](https://vuejs.org/). If you need [Vue 3](https://v3.vuejs.org) compatible version, please check out [v2](https://github.com/adbrosaci/vue-lang-router/tree/vue-3) of this project.
 
 
 ## Installation
@@ -143,7 +152,7 @@ export default { cs };
 Language router will parse any given path and attempt to localize its segments based on this configuration. If no match is found, the original path segment is retained.
 
 
-#### 3. Modify your router file
+#### 4. Modify your router file
 
 - Import `LangRouter` and use it instead of `VueRouter`.
 - Import translations and localized URLs and pass them to `LangRouter` plugin.
@@ -172,7 +181,7 @@ const router = new LangRouter({
 });
 ```
 
-#### 4. Modify your main file
+#### 5. Modify your main file
 
 Import `i18n` and use it in your `Vue` instance.
 

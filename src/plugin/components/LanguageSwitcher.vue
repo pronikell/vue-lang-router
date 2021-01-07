@@ -1,6 +1,6 @@
 <template>
 	<component :is="getTag()" class="router-language-switcher">
-		<slot :links="getLinks()" />
+		<slot :links="links" />
 	</component>
 </template>
 
@@ -11,7 +11,8 @@ export default {
 	name: 'LanguageSwitcher',
 	data () {
 		return {
-			currentUrl: this.url || this.$router.currentRoute.path,
+			currentUrl: this.url || this.$router.currentRoute.fullPath,
+			links: [],
 		};
 	},
 	props: [ 'tag', 'active-class', 'url' ],
@@ -20,7 +21,7 @@ export default {
 			if (this.tag) { return this.tag; }
 			else { return 'div'; }
 		},
-		getLinks () {
+		generateLinks () {
 			let links = [];
 			const activeClass = this.activeClass || 'router-active-language';
 			const tr = this._langRouter.translations;
@@ -36,13 +37,17 @@ export default {
 				}
 			}
 
-			return links;
+			this.links = links;
 		},
 	},
 	watch: {
 		$route (to) {
-			this.currentUrl = this.url || to.path;
+			this.currentUrl = this.url || to.fullPath;
+			this.generateLinks();
 		},
+	},
+	mounted () {
+		this.generateLinks();
 	},
 };
 </script>

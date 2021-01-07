@@ -1,5 +1,5 @@
 /**
- * vue-lang-router v1.1.0
+ * vue-lang-router v1.2.4
  * (c) 2020 Radek Altof
  * Released under the MIT License.
  */
@@ -145,7 +145,8 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 		name: 'LanguageSwitcher',
 		data: function data () {
 			return {
-				currentUrl: this.url || this.$router.currentRoute.path,
+				currentUrl: this.url || this.$router.currentRoute.fullPath,
+				links: [],
 			};
 		},
 		props: [ 'tag', 'active-class', 'url' ],
@@ -154,7 +155,7 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 				if (this.tag) { return this.tag; }
 				else { return 'div'; }
 			},
-			getLinks: function getLinks () {
+			generateLinks: function generateLinks () {
 				var links = [];
 				var activeClass = this.activeClass || 'router-active-language';
 				var tr = this._langRouter.translations;
@@ -168,13 +169,17 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 						});
 					}
 				}
-				return links;
+				this.links = links;
 			},
 		},
 		watch: {
 			$route: function $route (to) {
-				this.currentUrl = this.url || to.path;
+				this.currentUrl = this.url || to.fullPath;
+				this.generateLinks();
 			},
+		},
+		mounted: function mounted () {
+			this.generateLinks();
 		},
 	};
 
@@ -182,7 +187,7 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 	var __vue_script__$1 = script$1;
 
 	/* template */
-	var __vue_render__$1 = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c(_vm.getTag(),{tag:"component",staticClass:"router-language-switcher"},[_vm._t("default",null,{"links":_vm.getLinks()})],2)};
+	var __vue_render__$1 = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c(_vm.getTag(),{tag:"component",staticClass:"router-language-switcher"},[_vm._t("default",null,{"links":_vm.links})],2)};
 	var __vue_staticRenderFns__$1 = [];
 
 	  /* style */
@@ -325,7 +330,7 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 			if (lang != defaultLanguage) {
 				var translatedPath = translatePath(to.path, lang);
 				translatedPath = '/' + lang + (translatedPath.charAt(0) != '/' ? '/' : '') + translatedPath;
-				return next(translatedPath);
+				return next({ path: translatedPath, query: to.query, hash: to.hash });
 			}
 		}
 		loadLanguage(lang).then(function () {
@@ -362,12 +367,22 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 		if (navigator.languages && navigator.languages.length) { return extractLanguage(navigator.languages[0] || ''); }
 		return extractLanguage(navigator.language || navigator.browserLanguage || navigator.userLanguage || '');
 	}
-	function localizePath (path, lang) {
+	function localizePath (fullPath, lang) {
 		if (!lang || !localizedURLs[lang]) { lang = exports.i18n.locale; }
+		var path = fullPath;
+		var query = '';
+		if (fullPath.includes('?')) {
+			path = fullPath.split('?')[0];
+			query = '?' + fullPath.split('?')[1];
+		}
+		else if (fullPath.includes('#')) {
+			path = fullPath.split('#')[0];
+			query = '#' + fullPath.split('#')[1];
+		}
 		var pathChunks = path.split('/');
 		var pathLang = (localizedURLs[pathChunks[1]] ? pathChunks[1] : false);
 		var currentPathLang = this.$router.currentRoute.path.split('/')[1];
-		if (lang == defaultLanguage && !localizedURLs[currentPathLang] && !pathLang) { return path; }
+		if (lang == defaultLanguage && !localizedURLs[currentPathLang] && !pathLang) { return fullPath; }
 		var resolvedPath = false;
 		if (pathLang) {
 			var resolvedRoute = this.$router.resolve(path);
@@ -383,7 +398,7 @@ var LangRouter = (function (exports, VueI18n, VueRouter) {
 		}
 		var translatedPath = translatePath(path, lang, pathLang, (resolvedPath || path));
 		translatedPath = '/' + lang + (translatedPath.charAt(0) != '/' ? '/' : '') + translatedPath;
-		return translatedPath;
+		return translatedPath + query;
 	}
 	if (typeof window !== 'undefined' && window.Vue) {
 		window.Vue.use(LangRouter);
